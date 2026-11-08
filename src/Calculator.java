@@ -12,32 +12,39 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
 public class Calculator extends JFrame implements ActionListener{
 
     private JTextField display;
-    JButton ac;
-    JButton backspaceButton;
-    JButton percentButton;
-    JButton divideButton;
-    JButton number7; 
-    JButton number8;
-    JButton number9;
-    JButton multiplyButton;  
-    JButton number4;
-    JButton number5;
-    JButton number6;
-    JButton subtractButton;   
-    JButton number1; 
-    JButton number2; 
-    JButton number3;   
-    JButton addButton;   
-    JButton number0;   
-    JButton decimalButton;   
-    JButton signButton;   
-    JButton equalsButton;   
-    
+    private JButton ac;
+    private JButton backspaceButton;
+    private JButton percentButton;
+    private JButton divideButton;
+    private JButton number7; 
+    private JButton number8;
+    private JButton number9;
+    private JButton multiplyButton;  
+    private JButton number4;
+    private JButton number5;
+    private JButton number6;
+    private JButton subtractButton;   
+    private JButton number1; 
+    private JButton number2; 
+    private JButton number3;   
+    private JButton addButton;   
+    private JButton number0;   
+    private JButton decimalButton;   
+    private JButton signButton;   
+    private JButton equalsButton;   
 
+    private double firstNumber;
+    private double secondNumber;
+    private String operator;
+    private double result;
+    private boolean calculationComplete = false;
+
+    DecimalFormat df = new DecimalFormat("0.##########");
 
     // ==== Constructor ====
     public Calculator(){
@@ -63,7 +70,7 @@ public class Calculator extends JFrame implements ActionListener{
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         ac = new JButton("AC");
-        backspaceButton  = new JButton(new ImageIcon("resources\\delete.png"));
+        backspaceButton  = new JButton(new ImageIcon(getClass().getResource("/resources/delete.png")));
         percentButton = new JButton("%");
         divideButton = new JButton("/");
 
@@ -157,14 +164,149 @@ public class Calculator extends JFrame implements ActionListener{
         // Handle number button clicks
         if (command.matches("[0-9]")) {
 
-            if (display.getText().equals("0")) {
+            if(calculationComplete){
                 display.setText(command);  
-            }else{
-                display.setText(display.getText()+command);
+                calculationComplete = false; 
+
+            } else if (display.getText().equals("0")) {
+                display.setText(command);  
+
+            } else{
+                display.setText(display.getText() + command);
             }
+            
+            return;
         }
         
-    }
+        // Handle decimal button clicks
+        if (command.equals(".")){
 
+            if (calculationComplete) {
+                display.setText("0.");
+                calculationComplete = false;
+
+            } else if(display.getText().contains(command)){
+                return;
+
+            } else if(display.getText().equals("0")){
+                display.setText("0.");
+
+            } else{
+                display.setText(display.getText() + command);
+            }
+
+            return;
+        }
+
+        //Handle sign button clicks
+        if(e.getSource() == signButton){
+
+            String currentText = display.getText();
+
+            if(currentText.equals("0")){
+                return;
+            }
+
+            if(currentText.startsWith("-")){
+                display.setText(currentText.substring(1));
+            } else{
+                display.setText("-" + currentText);
+            }
+            return;
+        }
+
+        // Handle backspace button clicks
+        if (e.getSource() == backspaceButton) {
+
+            String currentText = display.getText();
+
+            if(currentText.equals("0")) {
+                return;
+            }
+            
+            String newText = currentText.substring(0, currentText.length()-1);
+
+            if(newText.equals("-") || newText.isEmpty()){
+                display.setText("0");
+                return;
+            }
+                
+            display.setText(newText);        
+            
+            return;
+        }
+
+        //Handle AC button clicks
+        if(e.getSource() ==ac){
+            display.setText("0");
+            display.setFont(new Font("Arial", Font.PLAIN, 30));
+            return;
+        }
+
+        //Handle arithmetic operations button clicks (+ -  x /)
+        if(e.getSource() == addButton || 
+            e.getSource() == subtractButton || 
+            e.getSource() == multiplyButton || 
+            e.getSource() == divideButton){
+
+            calculationComplete = false;
+            firstNumber = Double.parseDouble(display.getText());
+            operator = e.getActionCommand();
+            display.setText("0");
+            return;
+        }
+    
+        //---equals button---
+        if(e.getSource() == equalsButton){
+
+            secondNumber = Double.parseDouble(display.getText());            
+            if(operator == null){
+                return;
+            }
+
+            switch (operator) {
+                case "+":
+                    result = firstNumber + secondNumber;
+                    display.setText(df.format(result));
+                    break;
+                
+                case "-":
+                    result = firstNumber - secondNumber;
+                    display.setText(df.format(result));
+                    break;
+
+                case "x":
+                    result = firstNumber * secondNumber;
+                    display.setText(df.format(result)); 
+                    break;
+                
+                case "/":
+                    if(secondNumber == 0){
+                        display.setText("Cannot divide by zero");
+                        display.setFont(new Font("Arial", Font.PLAIN, 12));
+                        return;
+                    }
+
+                    result = firstNumber / secondNumber;
+                    display.setText(df.format(result));
+                    break;
+
+                default:
+                    display.setText("Invalid operation");
+            }
+            calculationComplete = true;
+
+            return;       
+        }
+
+        //Handle percentage button clicks
+        if(e.getSource() == percentButton){
+            double currentNumber = Double.parseDouble(display.getText());
+            result = currentNumber / 100;
+            display.setText(df.format(result));
+            calculationComplete = true;
+            return;
+        }
+      }
 }
 
