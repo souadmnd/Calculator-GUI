@@ -24,14 +24,19 @@ A desktop calculator application built with **Java Swing**. This project was dev
 
 ```text
 Calculator-GUI/
+│
 ├── .vscode/
 │   └── settings.json
+│
 ├── resources/
 │   └── delete.png
+│
 ├── src/
 │   └── Calculator.java
+│
 ├── .gitignore
 └── README.md
+```
 
 ## Getting Started
 
@@ -44,7 +49,10 @@ Calculator-GUI/
 ### Run the Application
 
 1. Clone the repository:
+
+   ```bash
    git clone https://github.com/souadmd/Calculator-GUI.git
+   ```
 
 2. Open the project folder in VS Code.
 
