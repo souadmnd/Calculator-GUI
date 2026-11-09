@@ -22,17 +22,14 @@ A desktop calculator application built with **Java Swing**. This project was dev
 
 ## Project Structure
 
+```text
 Calculator-GUI/
-│
 ├── .vscode/
 │   └── settings.json
-│
 ├── resources/
 │   └── delete.png
-│
 ├── src/
 │   └── Calculator.java
-│
 ├── .gitignore
 └── README.md
 
